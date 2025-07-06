@@ -33,26 +33,11 @@ Install and launch VS Code.
 npm install -g @vue/cli
 ```
 
-
-PROJECT - 1 To run transcript-dummy project (PAID - AI VERSION - USING - GPT - LLM - MODEL)
+## To run local-transcript-reader project (UNPAID/FREE - AI)
+## Download ollama - https://ollama.com/download
 ##   1 - OPEN PROJECT IN THE EDITOR 
 ##   2 - GO TO PROJECT ROOT DIRECTORY
-##   3 - AND RUN 
-   ```sh
-      npm run install
-   ```
-##   4 - THEN RUN:
-   ```sh
-      npm run dev
-   ```
-##   PROJECT WILL RUN ON  -  http://localhost:5173/
-
-PROJECT - 2  To run local-transcript-reader project (UNPAID/FREE - AI)
-Download ollama - https://ollama.com/download
-##   1 - OPEN PROJECT IN THE EDITOR 
-##   2 - GO TO PROJECT ROOT DIRECTORY
-##   3 - TO START BACKEND SERVER - THIS SHOULD BE DONE AT ROOT LEVEL
-         RUN 
+##   3 - TO START BACKEND SERVER - THIS SHOULD BE DONE AT ROOT LEVEL AND RUN
    ```sh
       npm run install
    ```
@@ -63,8 +48,8 @@ Download ollama - https://ollama.com/download
 ##   BACKEND-SERVER WILL START 
 
 ## 4 - TO START FRONTEND
-      IN NEW TERMINAL - 
-      GO TO frontend directory - cd frontend 
+## IN NEW TERMINAL - 
+## GO TO frontend directory - cd frontend 
    ```sh
       npm run install
    ```
