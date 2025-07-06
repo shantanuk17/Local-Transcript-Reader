@@ -41,7 +41,7 @@ npm install -g @vue/cli
    ```sh
       npm run install
    ```
-   THEN RUN:
+##  THEN RUN:
    ```sh
       npm run start
    ```
@@ -53,7 +53,7 @@ npm install -g @vue/cli
    ```sh
       npm run install
    ```
-      THEN RUN:
+##     THEN RUN:
    ```sh
       npm run dev
    ```
