@@ -25,9 +25,7 @@ Node.js comes with npm (Node Package Manager), which is essential to run this pr
 2. Click the green **"Download"** button.
 3. Download the **LTS (Recommended for most users)** version.
 4. Run the installer:
-   - **Windows**: Make sure to check the box **“Install npm”** and **“Add to PATH”** during setup.
    - **macOS**: Use the `.pkg` file provided on the site.
-   - **Linux**: Follow the instructions provided for your distribution.
 5. After installation, verify:
 ```sh
    node -v
