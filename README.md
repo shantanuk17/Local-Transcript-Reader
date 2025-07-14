@@ -1,61 +1,91 @@
-## Recommended IDE Setup
+#  Local Transcript Reader — README
 
-Go to https://code.visualstudio.com/
+This project is a local transcript reader powered by AI (UNPAID/FREE) using [Ollama](https://ollama.com/), Node.js, and Vue.js.
 
-Download the installer for your operating system.
+---
 
-Install and launch VS Code.
+##  Recommended IDE Setup
+
+We recommend using **Visual Studio Code (VS Code)** as your development environment.
+
+### Steps:
+1. Visit [https://code.visualstudio.com/](https://code.visualstudio.com/)
+2. Download the appropriate installer for your operating system (Windows/macOS/Linux).
+3. Run the installer and follow the instructions.
+4. Launch **VS Code** after installation.
+
+---
 
 ## DOWNLOAD NODE.JS AND NPM
-## There are few methods to Download Node.js and npm.
-## 1 - Go to (https://nodejs.org/en) and click on Download Node.js button.
-   While Installing Node.js npm will also get installed on your system.
 
-## 2 - You can also download Node.js according to your operating system using nvm and npm by following the steps on the given link      https://nodejs.org/en/download or you can follow the below steps:
-   Download and install nvm:
+Node.js comes with npm (Node Package Manager), which is essential to run this project.
+
+### Steps:
+1. Visit the official Node.js website: [https://nodejs.org/en](https://nodejs.org/en)
+2. Click the green **"Download"** button.
+3. Download the **LTS (Recommended for most users)** version.
+4. Run the installer:
+   - **Windows**: Make sure to check the box **“Install npm”** and **“Add to PATH”** during setup.
+   - **macOS**: Use the `.pkg` file provided on the site.
+   - **Linux**: Follow the instructions provided for your distribution.
+5. After installation, verify:
 ```sh
-   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.2/install.sh | bash
+   node -v
+   npm -v
 ```
-   in lieu of restarting the shell
+##  INSTALL VUE.JS CLI
+   ```sh
+   npm install -g @vue/cli
+   ```
+
+## To verify the installation:
+   ```sh
+      vue --version
+   ```
+
+## DOWNLOAD OLLAMA
+This project uses Ollama, a local AI model engine that allows you to run LLMs locally.
+
+Steps:
+Visit https://ollama.com/download
+
+Download and install it according to your operating system.
+
+After installation, open the Ollama app or make sure it is running in the background before starting the project.
+
+## RUNNING THE LOCAL TRANSCRIPT READER PROJECT
+Follow these steps to run the complete application locally.
+
+1. OPEN PROJECT IN THE EDITOR (VS-Code)
+
+2. GO TO THE PROJECT ROOT DIRECTORY
+From your terminal, navigate to the root directory where package.json is located.
+
+3. INSTALL BACKEND DEPENDENCIES
+Run the following command to install backend dependencies:
 ```sh
-   \. "$HOME/.nvm/nvm.sh"
-```
-   Download and install Node.js:
-```sh
-   nvm install 22
-```
-## INSTALL VUE.JS :
-```sh
-   yarn global add @vue/cli
-```
-   OR 
-```sh
-npm install -g @vue/cli
+npm install
 ```
 
-## To run local-transcript-reader project (UNPAID/FREE - AI)
-## Download ollama - https://ollama.com/download
-##   1 - OPEN PROJECT IN THE EDITOR 
-##   2 - GO TO PROJECT ROOT DIRECTORY
-##   3 - TO START BACKEND SERVER - THIS SHOULD BE DONE AT ROOT LEVEL AND RUN
-   ```sh
-      npm run install
-   ```
-##  THEN RUN:
-   ```sh
-      npm run start
-   ```
-##   BACKEND-SERVER WILL START 
+4. START THE BACKEND SERVER
+To start the backend server, run:
+```sh
+npm start
+```
 
-## 4 - TO START FRONTEND
-## IN NEW TERMINAL - 
-## GO TO frontend directory - cd frontend 
-   ```sh
-      npm run install
-   ```
-##     THEN RUN:
-   ```sh
-      npm run dev
-   ```
-##   PROJECT WILL RUN ON  -  http://localhost:5173/
+5. START THE FRONTEND
+In a new terminal window:
+Navigate to the frontend folder:
+```sh
+cd frontend
+```
+```sh
+npm install
+```
+```sh
+npm run dev
+```
 
+The frontend application will run at:
+
+http://localhost:5173/
