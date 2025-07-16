@@ -39,26 +39,51 @@ function handleFile(e) {
   file.value = e.target.files[0];
 }
 
+// async function extractData() {
+//   error.value = '';
+//   result.value = null;
+//   loading.value = true;
+
+//   try {
+//     let text = '';
+//     if (file.value.type === 'application/pdf') {
+//       text = await extractTextFromPDF(file.value);
+//     } else if (file.value.type.startsWith('image/')) {
+//       const { data } = await Tesseract.recognize(file.value, 'eng');
+//       text = data.text;
+//     } else {
+//       throw new Error('Unsupported file type');
+//     }
+
+//     const res = await fetch('http://localhost:3001/api/llm', {
+//       method: 'POST',
+//       headers: { 'Content-Type': 'application/json' },
+//       body: JSON.stringify({ text })
+//     });
+
+//     const data = await res.json();
+//     if (data.error) throw new Error(data.error);
+//     result.value = data;
+//   } catch (err) {
+//     error.value = err.message;
+//     console.error(err);
+//   } finally {
+//     loading.value = false;
+//   }
+// }
+
 async function extractData() {
   error.value = '';
   result.value = null;
   loading.value = true;
 
   try {
-    let text = '';
-    if (file.value.type === 'application/pdf') {
-      text = await extractTextFromPDF(file.value);
-    } else if (file.value.type.startsWith('image/')) {
-      const { data } = await Tesseract.recognize(file.value, 'eng');
-      text = data.text;
-    } else {
-      throw new Error('Unsupported file type');
-    }
+    const formData = new FormData();
+    formData.append('file', file.value);
 
-    const res = await fetch('http://localhost:3001/api/llm', {
+    const res = await fetch('http://localhost:3001/api/granite', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
+      body: formData
     });
 
     const data = await res.json();
@@ -71,6 +96,7 @@ async function extractData() {
     loading.value = false;
   }
 }
+
 
 async function extractTextFromPDF(file) {
   const buffer = await file.arrayBuffer();

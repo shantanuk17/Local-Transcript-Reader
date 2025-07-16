@@ -1,68 +1,97 @@
+import { fromPath } from 'pdf2pic'; 
 import express from 'express';
 import cors from 'cors';
-import bodyParser from 'body-parser';
+import multer from 'multer';
+import fs from 'fs';
+import fetch from 'node-fetch';
 import { createServer } from 'http';
+import path from 'path';
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-app.post('/api/llm', async (req, res) => {
-  const { text } = req.body;
+const upload = multer({ dest: 'uploads/' });
 
-  if (!text || text.trim() === '') {
-    return res.status(400).json({ error: 'Transcript text is empty.' });
+app.post('/api/granite', upload.single('file'), async (req, res) => {
+  const filePath = req.file?.path;
+  const originalName = req.file?.originalname;
+  if (!filePath) {
+    return res.status(400).json({ error: 'No file uploaded' });
   }
 
-  const prompt = `You are a transcript parser. Given the text of an academic transcript, respond with valid JSON only. The JSON must contain two fields:
-1. "courses": an array of objects with { code, name, credits, grade, semester }
-2. "GPA": a number
-
-Here is the transcript text:
-
-${text}
-
-Respond with only valid JSON. Do not explain. Do not wrap in markdown.`;
+  const ext = path.extname(originalName).toLowerCase();
+  const isPDF = ext === '.pdf';
+  let imageBuffers = [];
 
   try {
-    const response = await fetch('http://localhost:11434/api/generate', {
+    if (isPDF) {
+      const options = { density: 100, format: 'png', width: 1200, height: 1600 };
+      const convert = fromPath(path.resolve(filePath), options);
+      for (let i = 1; i <= 5; i++) { 
+        const pageData = await convert(i, { responseType: 'base64' });
+        if (!pageData || !pageData.base64) break;  
+        imageBuffers.push(pageData.base64);
+      }
+    } else {
+      const buffer = fs.readFileSync(filePath);
+      imageBuffers = [ buffer.toString('base64') ];
+    }
+
+    const prompt = `You are a transcript parser. From the following images of a transcript, extract JSON only with:
+{
+  "courses": [
+    { "code": "...", "name": "...", "credits": "...", "grade": "...", "semester": "..." }
+  ],
+  "GPA": "..."
+}
+Respond ONLY with valid JSON.`;
+
+    const graniteRes = await fetch('http://localhost:11434/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'mistral',
+        model: 'granite3.2-vision:2b',
         prompt,
+        images: imageBuffers,
         stream: false
       })
     });
 
-    const data = await response.json();
-    console.log("JSON response:", data);
-
-    if (!data || !data.response) {
-      console.error("No response from LLM:", data);
-      return res.status(400).json({ error: "No valid response from model." });
+    const graniteData = await graniteRes.json();
+    if (!graniteData.response) {
+      return res.status(400).json({ error: 'No response from Granite model.' });
     }
 
-    let output = data.response.trim();
-    console.log('Raw LLM output:\n', output);
+    let cleaned = graniteData.response
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .replace(/"credits"\s*:\s*NP/g, '"credits": "NP"')
+      .replace(/"GPA"\s*:\s*N\/A/g, '"GPA": "N/A"')
+      .trim();
 
-    const match = output.match(/\{[\s\S]*\}/);
-    if (!match) {
-      console.error('No valid JSON object found in model output.');
-      return res.status(400).json({ error: 'Model response did not include valid JSON.' });
+    const parsed = JSON.parse(cleaned);
+
+    const gpaValues = parsed.courses
+      .map(c => parseFloat(c.GPA))
+      .filter(n => !isNaN(n));
+
+    const avgGPA = gpaValues.length
+      ? (gpaValues.reduce((a, b) => a + b, 0) / gpaValues.length).toFixed(2)
+      : null;
+
+    res.json({
+      courses: parsed.courses,
+      GPA: avgGPA ?? parsed.GPA ?? null
+    });
+
+  } catch (err) {
+    console.error('Granite Error:', err.message);
+    res.status(500).json({ error: 'Failed to process file with Granite.' });
+  } finally {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
     }
-
-    try {
-      const parsed = JSON.parse(match[0]);
-      res.json(parsed);
-    } catch (e) {
-      console.error('Failed to parse extracted JSON:', e.message);
-      return res.status(400).json({ error: 'Failed to parse JSON from model output.' });
-    }
-
-  } catch (e) {
-    console.error('Server error during LLM processing:', e.message);
-    res.status(500).json({ error: 'Internal server error.' });
   }
 });
 
